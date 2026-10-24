@@ -1,0 +1,1 @@
+import{t as e}from"./DocsLayout-ByOtuHOL.js";import{_ as t}from"./index-DWX8qYWy.js";var n=t();function r({slug:t}){return(0,n.jsx)(e,{section:`docs`,slug:t})}export{r as DocsPage};

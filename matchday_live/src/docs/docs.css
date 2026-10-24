@@ -1,0 +1,857 @@
+/*
+ * The Docs and the Guide. Reading first: a measured line for prose, room
+ * for diagrams and tables to be wide, and the theme's own tokens, so light
+ * and dark need nothing of their own except which diagram to show.
+ */
+
+.docs {
+  display: grid;
+  grid-template-columns: 252px minmax(0, 1fr);
+  gap: 44px;
+  align-items: start;
+}
+
+/* ── contents ───────────────────────────────────────────────────────────── */
+
+.docs-side {
+  position: sticky;
+  top: calc(var(--topbar-h, 56px) + 16px);
+  max-height: calc(100vh - var(--topbar-h, 56px) - 32px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding-bottom: 16px;
+}
+
+.docs-menu-button {
+  display: none;
+}
+
+.docs-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.docs-tabs a {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 7px;
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.docs-tabs a:hover {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.docs-tabs a[aria-current='page'] {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+.docs-pages {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+}
+
+.docs-pages > li > a {
+  display: block;
+  padding: 6px 10px;
+  border-radius: var(--radius-s);
+  color: var(--ink-2);
+  line-height: 1.35;
+}
+
+.docs-pages > li > a:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.docs-pages > li > a[aria-current='page'] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.docs-headings {
+  list-style: none;
+  margin: 4px 0 10px 12px;
+  padding: 0 0 0 10px;
+  border-left: 2px solid var(--line);
+}
+
+.docs-headings a {
+  display: block;
+  padding: 3px 8px;
+  color: var(--ink-3);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.docs-headings a:hover,
+.docs-headings a[aria-current='location'] {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* ── the page ───────────────────────────────────────────────────────────── */
+
+.doc {
+  min-width: 0;
+  max-width: 1080px;
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.68;
+}
+
+.doc > :is(p, ul, ol, blockquote, h1, h2, h3, h4, h5, h6, hr) {
+  max-width: 760px;
+}
+
+.doc-title {
+  margin: 4px 0 20px;
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4.6vw, 46px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: 0.005em;
+  scroll-margin-top: calc(var(--topbar-h, 56px) + 20px);
+}
+
+.doc h2,
+.doc h3,
+.doc h4,
+.doc h5,
+.doc h6 {
+  scroll-margin-top: calc(var(--topbar-h, 56px) + 20px);
+  color: var(--ink);
+}
+
+.doc h2 {
+  margin: 48px 0 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.doc h3 {
+  margin: 30px 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.doc h4,
+.doc h5,
+.doc h6 {
+  margin: 22px 0 6px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.doc-anchor {
+  display: inline-flex;
+  margin-left: 8px;
+  color: var(--ink-3);
+  vertical-align: middle;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.doc-heading:hover .doc-anchor,
+.doc-anchor:focus-visible {
+  opacity: 1;
+}
+
+.doc p,
+.doc ul,
+.doc ol,
+.doc blockquote {
+  margin: 0 0 16px;
+}
+
+.doc ul,
+.doc ol {
+  padding-left: 24px;
+}
+
+.doc li + li {
+  margin-top: 6px;
+}
+
+.doc li > p {
+  margin-bottom: 8px;
+}
+
+.doc li > .doc-code {
+  margin-top: 10px;
+}
+
+.doc li::marker {
+  color: var(--ink-3);
+}
+
+.doc strong {
+  font-weight: 700;
+}
+
+.doc a {
+  color: var(--accent);
+  text-underline-offset: 2px;
+}
+
+.doc code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--surface-3);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  overflow-wrap: anywhere;
+}
+
+.doc-file-ref {
+  border-bottom: 1px dotted var(--ink-3);
+  cursor: help;
+}
+
+.doc blockquote {
+  padding: 4px 0 4px 16px;
+  border-left: 3px solid var(--line-strong);
+  color: var(--ink-2);
+}
+
+.doc hr {
+  margin: 32px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.doc-missing {
+  color: var(--bad);
+}
+
+/* ── code ───────────────────────────────────────────────────────────────── */
+
+.doc-code {
+  max-width: 900px;
+  margin: 0 0 20px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.doc-code-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 6px 3px 14px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.doc-code-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  cursor: pointer;
+}
+
+.doc-code-copy:hover {
+  background: var(--surface-3);
+  color: var(--ink);
+}
+
+.doc-code pre {
+  margin: 0;
+  padding: 12px 14px;
+  overflow-x: auto;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  line-height: 1.6;
+  tab-size: 2;
+}
+
+.doc-code pre code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+  overflow-wrap: normal;
+  white-space: pre;
+}
+
+/* ── tables ─────────────────────────────────────────────────────────────── */
+
+.doc-table {
+  margin: 0 0 22px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.doc-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.doc-table th,
+.doc-table td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.doc-table th {
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.doc-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.doc-table td:first-child {
+  min-width: 9ch;
+}
+
+/* In a cell, break a long name between words only, and let the table scroll. */
+.doc-table code {
+  overflow-wrap: break-word;
+}
+
+.doc-table .align-center {
+  text-align: center;
+}
+
+.doc-table .align-right {
+  text-align: right;
+}
+
+/* ── diagrams ───────────────────────────────────────────────────────────── */
+
+.doc-figure {
+  margin: 10px 0 30px;
+}
+
+.doc-figure-frame {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.doc-figure-variant {
+  display: block;
+  cursor: zoom-in;
+}
+
+.doc-figure-variant img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.doc-figure figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 16px;
+  margin-top: 8px;
+  color: var(--ink-3);
+  font-size: 14px;
+}
+
+.doc-figure-title {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.doc-figure-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.doc-figure-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Which diagram: the light one, unless the page is dark. */
+.doc-figure .doc-figure-dark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .doc-figure .doc-figure-light {
+    display: none;
+  }
+  :root:not([data-theme='light']) .doc-figure-variant.doc-figure-dark {
+    display: block;
+  }
+  :root:not([data-theme='light']) .doc-figure-links .doc-figure-dark {
+    display: inline-flex;
+  }
+}
+
+:root[data-theme='dark'] .doc-figure .doc-figure-light {
+  display: none;
+}
+
+:root[data-theme='dark'] .doc-figure-variant.doc-figure-dark {
+  display: block;
+}
+
+:root[data-theme='dark'] .doc-figure-links .doc-figure-dark {
+  display: inline-flex;
+}
+
+/* ── charts ─────────────────────────────────────────────────────────────── */
+
+.doc-chart {
+  max-width: 900px;
+  margin: 6px 0 28px;
+  padding: 16px 18px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.doc-chart-title {
+  margin-bottom: 12px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.doc-chart-source {
+  margin: 12px 0 0 !important;
+  color: var(--ink-3);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.chart-bar,
+.chart-stack {
+  display: block;
+  width: 100%;
+  height: 14px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.chart-stack {
+  height: 30px;
+  border-radius: var(--radius-s);
+}
+
+.chart-track {
+  fill: var(--surface-3);
+}
+
+.chart-fill {
+  fill: var(--accent);
+}
+
+.tone-building {
+  fill: #2f9e44;
+  background: #2f9e44;
+}
+.tone-planning {
+  fill: #6741d9;
+  background: #6741d9;
+}
+.tone-verifying {
+  fill: #1971c2;
+  background: #1971c2;
+}
+.tone-rest {
+  fill: var(--line-strong);
+  background: var(--line-strong);
+}
+.tone-playmaker {
+  fill: #a78bfa;
+  background: #a78bfa;
+}
+.tone-builder {
+  fill: #22d3ee;
+  background: #22d3ee;
+}
+.tone-ranger {
+  fill: #fbbf24;
+  background: #fbbf24;
+}
+.tone-safety_officer {
+  fill: #fb7185;
+  background: #fb7185;
+}
+.tone-bard {
+  fill: #e879f9;
+  background: #e879f9;
+}
+.tone-accent {
+  fill: var(--accent);
+  background: var(--accent);
+}
+.tone-muted {
+  fill: var(--line-strong);
+  background: var(--line-strong);
+}
+.tone-good {
+  fill: var(--good);
+  background: var(--good);
+}
+.tone-bad {
+  fill: var(--bad);
+  background: var(--bad);
+}
+.tone-read {
+  fill: var(--accent);
+  background: var(--accent);
+}
+.tone-billed {
+  fill: var(--line-strong);
+  background: var(--line-strong);
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 10px 0 4px !important;
+  padding: 0 !important;
+  list-style: none;
+  font-size: 14px;
+}
+
+.chart-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 !important;
+}
+
+.chart-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.chart-legend-label {
+  color: var(--ink-2);
+}
+
+.chart-value {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.chart-sub {
+  color: var(--ink-3);
+}
+
+.chart-rows {
+  display: grid;
+  gap: 10px;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: minmax(7ch, 120px) minmax(0, 1fr) 190px;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.chart-row-label {
+  color: var(--ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chart-pair {
+  display: grid;
+  grid-template-columns: minmax(7ch, 120px) minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.chart-pair-bars {
+  display: grid;
+  gap: 4px;
+}
+
+.chart-pair-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px;
+  gap: 12px;
+  align-items: center;
+}
+
+.chart-gate {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.chart-gate-case {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-s);
+  background: var(--surface-2);
+}
+
+.chart-gate-case .chart-row {
+  grid-template-columns: 6ch minmax(0, 1fr) 4ch;
+}
+
+.chart-gate-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.chart-verdict {
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.chart-verdict.good {
+  background: var(--good-soft);
+  color: var(--good);
+}
+
+.chart-verdict.bad {
+  background: var(--bad-soft);
+  color: var(--bad);
+}
+
+.chart-note {
+  margin: 0 !important;
+  color: var(--ink-3);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* ── previous and next ──────────────────────────────────────────────────── */
+
+.doc-pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  max-width: 760px;
+  margin-top: 56px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.doc-pager-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.doc-pager-link:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
+.doc-pager-link.next {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.doc-pager-hint {
+  display: block;
+  color: var(--ink-3);
+  font-size: 13px;
+}
+
+.doc-pager-title {
+  display: block;
+  font-weight: 600;
+}
+
+/* ── phones and narrow windows: the contents become a menu ──────────────── */
+
+@media (max-width: 900px) {
+  .docs {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .docs-side {
+    z-index: 15;
+    max-height: none;
+    margin: -24px calc(var(--gutter) * -1) 0;
+    padding: 8px var(--gutter);
+    overflow: visible;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    top: var(--topbar-h, 56px);
+  }
+
+  .docs-menu-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .docs-menu-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .docs-menu-current {
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+
+  .docs-nav {
+    display: none;
+  }
+
+  .docs.menu-open .docs-nav {
+    display: block;
+    max-height: calc(100dvh - var(--topbar-h, 56px) - 90px);
+    overflow: auto;
+    padding: 12px 2px 8px;
+  }
+
+  .doc {
+    font-size: 16px;
+  }
+
+  /* Clear the sticky contents bar as well as the top bar. */
+  .doc-title,
+  .doc h2,
+  .doc h3,
+  .doc h4,
+  .doc h5,
+  .doc h6 {
+    scroll-margin-top: calc(var(--topbar-h, 56px) + 84px);
+  }
+
+  .doc h2 {
+    margin-top: 38px;
+    font-size: 26px;
+  }
+
+  .doc-anchor {
+    opacity: 1;
+  }
+
+  .doc-pager {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* A wide diagram keeps a readable size and scrolls sideways. */
+  .doc-figure-frame {
+    overflow-x: auto;
+  }
+
+  .doc-figure-variant img {
+    width: max(100%, 720px);
+    max-width: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .chart-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .chart-pair-line {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .chart-row > .chart-row-label {
+    grid-column: 1 / -1;
+  }
+
+  .chart-pair {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+
+  .chart-gate-case .chart-row {
+    grid-template-columns: 6ch minmax(0, 1fr) 4ch;
+  }
+
+  .chart-gate-case .chart-row > .chart-row-label {
+    grid-column: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doc-anchor {
+    transition: none;
+  }
+}

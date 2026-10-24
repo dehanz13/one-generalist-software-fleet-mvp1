@@ -1,0 +1,164 @@
+# Quest: typed records in ⟦n_files⟧ files (⟦label⟧⟦pilot⟧)
+
+```ogsf
+difficulty: run-mythic
+precondition: |
+  node scripts/type-safety/index-signature-reads.mjs ⟦q⟧ > /dev/null
+  test $? -eq 1
+writes:
+⟦writes⟧
+checks:
+  - name: no read from an index signature is left in the files in scope
+    run: |
+      node scripts/type-safety/index-signature-reads.mjs ⟦q⟧
+  - name: the emitted JavaScript of every file in scope is unchanged
+    run: |
+⟦base⟧      node scripts/type-safety/same-emit.mjs "$base" ⟦emit_files⟧
+  - name: no bracket access with a literal key was added
+    run: |
+⟦base⟧⟦check3⟧
+  - name: no any, no suppression and no double cast was added
+    run: |
+⟦base⟧⟦check4⟧
+  - name: the helper type is the one this spec gives, and it emits nothing
+    run: |
+      test -f lib/unchecked-fields.ts || { echo "lib/unchecked-fields.ts is missing"; exit 1; }
+      grep -q 'export type UncheckedFields<Field extends string> = {' lib/unchecked-fields.ts
+      grep -q 'readonly \[Name in Field\]?: unknown;' lib/unchecked-fields.ts
+      test "$(grep -cE '^(export )?(const|let|var|function|class|enum) ' lib/unchecked-fields.ts)" -eq 0
+```
+
+> Dispatched with `ogsf run-mythic ⟦spec⟧` from the branch
+> `feature/⟦slug⟧`, cut from
+> `release/beta-eighteen-type-safety-ci-hardening-and-leaner-tests`.
+> Read `docs/agent-brief.md` before planning.
+
+## Why this quest exists
+
+Typecheck is the last official review red on this release, and every error left is
+`TS4111`: with `noPropertyAccessFromIndexSignature` on, `r.name` is refused
+when `r` is typed as nothing but "some string keys". The founder chose to fix
+the types those reads come from, over writing `r["name"]` everywhere (which
+checks nothing) or turning the flag off. `docs/beta-18-running-notes/slice-plan.md`
+has the measurement: 976 of the errors read from a value typed
+`Record<string, unknown>` (or a relative of it), and they hang off 418
+declarations, none shared between files. So each needs its own shape
+written down. This group is ⟦n_rows⟧ errors in ⟦n_files⟧ files.
+
+## The rule: say which fields the code reads, and change nothing that runs
+
+**This quest changes types only.** No statement, expression, default, branch
+or test assertion changes. The contract proves it: each file's JavaScript,
+with types and comments removed, must be identical to what it was. If a
+file cannot be made to pass typecheck without changing what runs, leave that
+read as it is, say so in the commit message, and let the check fail on it.
+
+There are three cases. Decide which one a declaration is before typing it.
+
+**1. A value that is read and has not been checked yet** (a request body, a
+stored row, a parsed file, a mock's recorded arguments). Name the fields
+the code reads, with the helper type:
+
+```ts
+// before
+const r = raw as Record<string, unknown>;
+if (!isSoundSlot(r.slot)) continue;
+rows.push({ id: String(r.id), version: Number(r.version) });
+
+// after
+const r = raw as UncheckedFields<"id" | "slot" | "version">;
+```
+
+Each field is optional and `unknown`, so every existing check
+(`typeof r.label === "string"`) still type-checks and still has to be there.
+Import it with `import type { UncheckedFields } from "@/lib/unchecked-fields";`.
+List exactly the fields that are read: the table below has them.
+
+**2. A value the code builds** (it is assigned to: `body.captchaToken = token`,
+`delete older.spoken_code`). `UncheckedFields` is read-only and `unknown`,
+which is wrong for something being filled in. Spell the shape out, with the
+real type of each field the code sets:
+
+```ts
+// before
+const body: Record<string, unknown> = { email };
+if (captchaToken) body.captchaToken = captchaToken;
+
+// after
+const body: { email: string; captchaToken?: string } = { email };
+```
+
+**3. A value whose real type already exists** (a row type exported by the
+module under test, a response type, a props type). Import that type with
+`import type` and use it. Do not invent a second description of the same
+thing.
+
+Two more things decide where the type goes:
+
+- **Change the type where the value gets it, once.** When a read is of a
+  callback parameter (`rows.map((row) => row.player_id)`) or of a field
+  (`db.writes.rematch`), the type comes from the declaration of the array or
+  the field. Change it there, and every read below it is fixed. Do not cast
+  at each read.
+- **When the type comes from a helper in another file of this repository**,
+  fix it there. The section "Sources in other files" below lists the ones
+  the measurement found, and their files are in `writes`. The pilot group
+  cast at ten calls where typing one helper was the fix.
+- **When the type comes from a package** (a library's own type with an
+  index signature), or from a repository file that is not in `writes`, do
+  not edit that file. Cast at the
+  call here (`(await readJsonObject(req)) as UncheckedFields<…>`) and name
+  the helper in the commit message, so that it can be fixed at its own
+  source when its file's quest comes.
+
+**Where the value was `any`** (the blog's front matter from `gray-matter`, a
+`JSON.parse` result) the code may already use a field as a string or a list
+without checking it. Give that field the type the code uses it as, in a
+spelled-out shape, and say in the type's doc comment that it is assumed and
+not checked. Do not add the check: that changes what runs, and replacing
+hand checks with schemas is a separate piece of work the founder has put in
+the backlog. List every such field in the commit message.
+
+Never:
+
+- write `value["field"]` to get past the error;
+- add `any`, `as unknown as`, `@ts-ignore`, `@ts-expect-error` or an
+  `eslint-disable`;
+- change `tsconfig.json`, or any file not in `writes`;
+- rename a field, reorder a statement, or "tidy" anything: the emit check
+  will fail the run for it.
+
+Give every named type you add a `/** … */` comment that says what the value
+is and where it comes from. ⟦helper_note⟧
+
+⟦helper_block⟧
+
+## The files, measured on this branch
+
+For each file: the declarations the refused reads hang off, whether the
+value is read or written to, what it is typed as today, and the fields
+read. Lines are of this branch's tip. `inferred` reads take their type from
+somewhere above the line shown: find that place.
+⟦table_text⟧
+⟦sources_text⟧
+## Changelog fragment
+
+`⟦frag⟧`: `### Changed`, then one bullet in the voice of the existing
+fragments, ending "nothing players see changes."
+
+## The commit message
+
+One commit. A Conventional Commit subject under 100 characters, then prose:
+how many errors went (the count before and after in these files), which
+declarations became case 1, 2 and 3, every field typed as assumed and not
+checked, every helper outside the quest that was cast at its call, and
+anything left unfixed with the reason.
+
+## Done when
+
+- [ ] No `TS4111` is left in the files in scope, and no new error of any
+      kind anywhere.
+- [ ] Every file's emitted JavaScript is unchanged.
+- [ ] The tests that passed before pass after, in both runners.
+- [ ] `⟦frag⟧` exists.
+- [ ] Nothing outside `writes` changed.

@@ -1,0 +1,22 @@
+{
+  "name": "ogsf",
+  "displayName": "OGSF · One Generalist Software Fleet",
+  "version": "0.2.0",
+  "description": "Run, observe and extend One Generalist Software Fleet: set pieces of players and plain code, recorded end to end in the match log and on Matchday Live. Built on Super Simple Software Factory by IndyDevDan (MIT).",
+  "author": {
+    "name": "Danniel"
+  },
+  "homepage": "https://example.com/ogsf",
+  "license": "MIT",
+  "keywords": [
+    "software-fleet",
+    "agents",
+    "set-pieces",
+    "pi",
+    "observability",
+    "matchday-live",
+    "scheduler",
+    "reports",
+    "remote-control"
+  ]
+}

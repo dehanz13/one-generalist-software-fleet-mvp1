@@ -1,0 +1,6 @@
+[label breaks] WEAKER: old fails 1, new fails 0
+    old-only: label
+[answer breaks] OK: old fails 1, new fails 1
+[harmless] NEITHER: old fails 0, new fails 0
+[missing] ABORT: the text to replace occurs 0 times in src/thing.ts
+examined 4 breaks: 1 ABORT, 1 NEITHER, 1 OK, 1 WEAKER

@@ -1,0 +1,92 @@
+diff --git a/components/home/Feed.test.tsx b/components/home/Feed.test.tsx
+index 1111111..2222222 100644
+--- a/components/home/Feed.test.tsx
++++ b/components/home/Feed.test.tsx
+@@ -10,2 +10,2 @@ describe("feed", () => {
+-    const first = document.querySelectorAll("li")[0];
+-    expect(list.firstElementChild).toBe(first);
++    const first = screen.getByText("Priya");
++    expect(first).toBeVisible();
+@@ -20 +20 @@
+-    const tag = container.querySelector('time[data-hp="countdown"]');
++    const tag = screen.getByTestId("countdown");
+@@ -30 +30 @@
+-    const cell = container.querySelector(".hp-daily-place [data-hp='gamer-tag']");
++    const cell = screen.getAllByTestId("gamer-tag");
+@@ -40 +40 @@
+-    const slide = root.querySelector(`[aria-roledescription="slide"]:not([aria-hidden])`);
++    const slide = screen.getByRole("group", { name: "Slide 1" });
+@@ -45 +45 @@
+-    const help = document.getElementById("squad-name-help");
++    expect(field).toHaveAccessibleDescription("Pick a name");
+@@ -50 +50 @@
+-    const bar = root.querySelector('[role="progressbar"], progress');
++    const bar = screen.queryByRole("progressbar");
+@@ -55 +55 @@
+-    render(<Card><p data-testid="ways-in">Host or join</p></Card>);
++    render(<Card><p>Host or join</p></Card>);
+@@ -60 +60 @@
+-    const card = container.querySelector('[data-hp="home-round"]');
++    const card = screen.getByRole("region", { name: "Round" });
+@@ -65 +65 @@
+-    const a = el.querySelector('[data-hp="a"]') ?? el.querySelector('[data-achievement="first-win"]');
++    const a = screen.getByText("First win");
+@@ -70 +70 @@
+-    const you = container.querySelector("tbody tr[data-you]");
++    const you = screen.getByRole("row", { name: /you/ });
+diff --git a/components/meters/Meter.test.tsx b/components/meters/Meter.test.tsx
+index 3333333..4444444 100644
+--- a/components/meters/Meter.test.tsx
++++ b/components/meters/Meter.test.tsx
+@@ -5 +5 @@
+-    expect(bar.getAttribute("aria-valuenow")).toBe("0");
++    expect(bar).toHaveValue(0);
+@@ -8 +8 @@
+-    expect(toggle.getAttribute("aria-checked")).toBe("false");
++    expect(toggle).not.toBeChecked();
+@@ -12,2 +12,2 @@
+-    expect(panel.style.clipPath).toBe("");
+-    expect(child.parentElement).toBe(host);
++    expect(panel).toHaveStyle({ clipPath: "" });
++    expect(host).toContainElement(child);
+@@ -20 +20 @@
+-    expect(el.style.clipPath).toMatch(/^polygon/);
++    expect(el).toHaveStyle({ clipPath: expect.stringMatching(/polygon/) });
+@@ -25 +25 @@
+-    const time = row.querySelector("time");
++    const time = screen.getByText(DATE, { selector: "time" });
+@@ -28 +28 @@
+-    const cap = fig.querySelector("figcaption");
++    const cap = within(x).getByText((_text, el) => el?.tagName === "FIGCAPTION");
+@@ -31 +31 @@
+-    expect(row.textContent).toMatch(/x/);
++    expect(row.innerHTML).toMatch(/x/);
+@@ -34 +34 @@
+-    const floater = el.closest(".floater");
++    const floater = el.closest(".floater") ?? null;
+@@ -37 +37 @@
+-    expect(chip.className).toBe("a b");
++    expect(chip).toHaveClass("a b");
+@@ -40 +40 @@
+-    const buttons = nav.querySelectorAll("button");
++    const buttons = within(nav).getAllByRole("button");
+@@ -44 +44 @@
+-    const links = nav.querySelectorAll("a");
++    const links = within(nav).getAllByRole("link", { hidden: true });
+@@ -48 +48 @@
+-    const anchor = x.closest("a");
++    const anchor = within(x).getByRole('link');
+diff --git a/components/gone/Old.test.tsx b/components/gone/Old.test.tsx
+deleted file mode 100644
+index 5555555..0000000
+--- a/components/gone/Old.test.tsx
++++ /dev/null
+@@ -1 +0,0 @@
+-    expect(document.querySelectorAll(".x")[2]).toBeVisible();
+diff --git a/components/keep/Fine.test.tsx b/components/keep/Fine.test.tsx
+index 6666666..7777777 100644
+--- a/components/keep/Fine.test.tsx
++++ b/components/keep/Fine.test.tsx
+@@ -3 +3 @@
+-    const all = document.querySelectorAll('[data-hp="row"]');
++    const all = document.querySelectorAll('[data-hp="row"]');

@@ -1,0 +1,20 @@
+# secrets: never committed
+.env
+.env.*
+!.env.sample
+
+# the fleet's runtime when it works on itself
+set_pieces/clubhouse/matches/
+set_pieces/clubhouse/match_log.db*
+*.db-wal
+*.db-shm
+
+# builds
+bin/
+matchday_live/dist/
+matchday_live/node_modules/
+.vercel/
+
+# local noise
+.DS_Store
+*.log

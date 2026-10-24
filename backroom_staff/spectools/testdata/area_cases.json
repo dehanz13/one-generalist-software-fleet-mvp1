@@ -1,0 +1,86 @@
+[
+  {
+    "case": "directories",
+    "name": "auth-contact-games-home",
+    "label": "group 1",
+    "prefixes": ["components/auth", "components/home/"],
+    "tests": ["14 passed (14)", "none in scope"],
+    "rows": [
+      {"file": "components/auth/Login.test.tsx", "env": "jsdom", "errors": 4,
+       "rules": [["testing-library/no-node-access", 2], ["jest-dom/prefer-in-document", 1], ["testing-library/render-result-naming-convention", 1]],
+       "left": [["testing-library/no-node-access", 2], ["testing-library/render-result-naming-convention", 1]],
+       "broken": "",
+       "sites": [[12, "no-node-access", "const row = container.querySelector(\"[data-hp='row']\");"],
+                 [30, "no-node-access", "expect(el.parentElement).toBe(host); // a long line that goes on and on, well past the hundred and ten character limit for a site"]],
+       "exact": 1, "hooks": 1, "expects": 9, "cases": 3, "cleanup": 2},
+      {"file": "components/home/Feed.test.ts", "env": "node", "errors": 2,
+       "rules": [["jest-dom/prefer-to-have-text-content", 1], ["jest-dom/prefer-in-document", 1]],
+       "left": [], "broken": "", "sites": [],
+       "exact": 0, "hooks": 0, "expects": 4, "cases": 2, "cleanup": 0},
+      {"file": "components/home/Clean.test.tsx", "env": "jsdom", "errors": 0,
+       "rules": [], "left": [], "broken": "", "sites": [],
+       "exact": 0, "hooks": 0, "expects": 3, "cases": 1, "cleanup": 1}
+    ]
+  },
+  {
+    "case": "scattered",
+    "name": "app-lib-storybook",
+    "label": "group 2",
+    "prefixes": ["app/r/[code]/page.test.tsx", "lib/pond/pond-engine.test.ts", "components/a11y/Dialog.a11y.test.tsx"],
+    "tests": ["9 passed (9)", "3 passed, 3 total"],
+    "rows": [
+      {"file": "app/r/[code]/page.test.tsx", "env": "jsdom", "errors": 3,
+       "rules": [["jest-dom/prefer-to-have-attribute", 1], ["testing-library/no-container", 2]],
+       "left": [["testing-library/no-container", 2]],
+       "broken": "Parsing error: ')' expected.",
+       "sites": [[5, "no-container", "const { container } = render(<Page />);"], [9, "no-container", "container.firstChild"]],
+       "exact": 0, "hooks": 0, "expects": 6, "cases": 2, "cleanup": 1},
+      {"file": "lib/pond/pond-engine.test.ts", "env": "node", "errors": 1,
+       "rules": [["jest-dom/prefer-enabled-disabled", 1]],
+       "left": [["jest-dom/prefer-enabled-disabled", 1]],
+       "broken": "", "sites": [],
+       "exact": 0, "hooks": 0, "expects": 2, "cases": 1, "cleanup": 0},
+      {"file": "components/a11y/Dialog.a11y.test.tsx", "env": "Jest", "errors": 2,
+       "rules": [["testing-library/no-node-access", 1], ["jest-dom/prefer-focus", 1]],
+       "left": [["testing-library/no-node-access", 1]],
+       "broken": "", "sites": [[14, "no-node-access", "document.activeElement"]],
+       "exact": 0, "hooks": 0, "expects": 3, "cases": 2, "cleanup": 0}
+    ]
+  },
+  {
+    "case": "two-jest-two-broken",
+    "name": "x",
+    "label": "group 3",
+    "prefixes": ["components/x"],
+    "tests": ["COULD NOT READ THE VITEST SUMMARY", "6 passed, 6 total"],
+    "rows": [
+      {"file": "components/x/A.a11y.test.tsx", "env": "Jest", "errors": 1,
+       "rules": [["jest-dom/prefer-focus", 1]], "left": [],
+       "broken": "Parsing error: Unexpected token", "sites": [],
+       "exact": 0, "hooks": 0, "expects": 1, "cases": 1, "cleanup": 0},
+      {"file": "components/x/B.a11y.test.tsx", "env": "Jest", "errors": 2,
+       "rules": [["testing-library/no-node-access", 2]], "left": [],
+       "broken": "Parsing error: ',' expected.",
+       "sites": [[3, "no-node-access", "x.closest('a')"], [4, "no-node-access", "y.closest('li')"]],
+       "exact": 0, "hooks": 0, "expects": 2, "cases": 1, "cleanup": 0},
+      {"file": "components/x/c.test.ts", "env": "node", "errors": 1,
+       "rules": [["testing-library/prefer-screen-queries", 1]],
+       "left": [["testing-library/prefer-screen-queries", 1]],
+       "broken": "", "sites": [],
+       "exact": 0, "hooks": 0, "expects": 5, "cases": 3, "cleanup": 1}
+    ]
+  },
+  {
+    "case": "legacy-test-spec",
+    "name": "x",
+    "label": "slice 9, group 0",
+    "prefixes": ["components/x"],
+    "tests": ["1 file, 1 test", "none"],
+    "rows": [
+      {"file": "components/x/A.test.tsx", "env": "jsdom", "errors": 1,
+       "rules": [["testing-library/no-node-access", 1]], "left": [["testing-library/no-node-access", 1]],
+       "broken": "", "sites": [[1, "no-node-access", "x"]],
+       "exact": 0, "hooks": 0, "expects": 1, "cases": 1, "cleanup": 1}
+    ]
+  }
+]

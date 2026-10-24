@@ -1,0 +1,21 @@
+{
+  "name": "ogsf-diagrams",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Builds the docs' Excalidraw scenes and exports them to SVG with Excalidraw's own renderer. Dev tooling only: Matchday Live never depends on it.",
+  "scripts": {
+    "export": "node export.mjs && node ../sync.mjs",
+    "sync": "node ../sync.mjs",
+    "media": "node record-media.mjs"
+  },
+  "devDependencies": {
+    "@excalidraw/excalidraw": "0.18.1",
+    "gifenc": "1.0.3",
+    "playwright": "1.62.1",
+    "pngjs": "7.0.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "vite": "8.3.4"
+  }
+}

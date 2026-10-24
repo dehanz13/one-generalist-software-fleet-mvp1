@@ -1,0 +1,214 @@
+# club.config.yaml — the fleet's roster. One player, one prompt, one purpose.
+# Stamped by `ogsf incorporate`, then yours to edit. `ogsf onboard --force`
+# writes a fresh copy.
+
+# This project's own answers. Everything below `defaults:` describes the fleet;
+# this block describes the repository it is working in, and is the part that
+# changes when the same fleet is pointed at another project. Each rule is a
+# CLAIM about the repo that every player is told (it becomes the "Club rules"
+# section of each system prompt). It does not change the repo: flip one only in
+# the commit that makes it true.
+project:
+  name: my-project
+  club_rules:
+    # Who unmounts rendered trees between tests (Testing Library).
+    #   manual — each test file calls cleanup() itself.
+    #   global — the test setup file registers afterEach(cleanup) for every file.
+    rtl_cleanup: manual
+    # The attribute `getByTestId` reads, and the import that makes it so in a
+    # test file ("" when the project's setup file or the library default does).
+    test_id_attribute: data-testid
+    test_id_import: ""
+    # Anything else a player must know about THIS repo and could not infer:
+    # one imperative sentence each.
+    notes: []
+
+defaults:
+  club: pi                       # pi | scripted   (claude_code: not implemented yet)
+  # Every model is provider/id: a bare pattern is ambiguous across providers.
+  model: anthropic/claude-sonnet-5-5
+  thinking: medium               # off | minimal | low | medium | high | xhigh | max
+  enchantments: []               # pi extensions loaded into the club (-e)
+  # Roster-wide allowlist; any player may override with its own list.
+  # NOTE: --tools filters extension tools too. A player whose enchantment
+  # registers a tool MUST name that tool in its own tools list, or the tool is
+  # silently filtered out.
+  tools:
+    - read                       # read file contents
+    - bash                       # execute bash commands
+    - edit                       # find/replace edits
+    - write                      # create/overwrite files
+    - grep                       # search file contents  (pi default: OFF)
+    - find                       # find files by glob     (pi default: OFF)
+    - ls                         # list directories       (pi default: OFF)
+  # Off-limits to every player that does not name them in its own `writes`.
+  # `tools` alone cannot protect these: bash runs `git checkout`, and write
+  # reaches any path. A player must not be able to edit the machinery that
+  # decides whether its own work passed.
+  #
+  # `writes:` per player says what it may change IN THE REPO. It never limits
+  # the match runtime under data_dir (torch_pass/, reports, prompts, raw
+  # output): every player can always write its own report.
+  restricted_area:
+    - set_pieces/boardroom/
+    - set_pieces/playbooks/
+  data_dir: set_pieces/clubhouse  # runtime home: {data_dir}/matches/{match_id}/{player}/
+
+var:
+  match_log: set_pieces/clubhouse/match_log.db   # the match feed writes here; `ogsf var` reads it
+  flush_ms: 1000                                 # how often a running match sends rows to Matchday Live
+
+# The deterministic checks. A known command is code, not a player. Order is
+# the order they run in (fast first); a build waits until every typecheck
+# passes. `diagnostics` names the parser the progressive gate uses to tell a
+# NEW problem from an old one: eslint, tsc, or leave it out for exit-code only.
+qa:
+  checks:
+    - name: lint
+      area: frontend
+      operation: lint
+      argv: [npm, run, lint]
+      timeout_seconds: 180
+      diagnostics: eslint
+    - name: typecheck
+      area: frontend
+      operation: typecheck
+      argv: [npm, run, typecheck]
+      timeout_seconds: 300
+      diagnostics: tsc
+    - name: test
+      area: frontend
+      operation: test
+      argv: [npm, run, test]
+      timeout_seconds: 1800
+    - name: build
+      area: frontend
+      operation: build
+      argv: [npm, run, build]
+      timeout_seconds: 600
+
+# Upcoming Matches: planned work, each ticket with a date, run by the
+# Scheduler (`ogsf scheduler`) when due (mode: auto) or by a person (manual).
+# The markdown format is in set_pieces/upcoming/README.md.
+upcoming:
+  sources:
+    - kind: markdown
+      path: set_pieces/upcoming/*.md
+    # - kind: linear              # designed for; arrives later
+  default_time: "09:00"           # when a ticket with a date and no time is due
+  timezone: ""                    # IANA zone for ticket dates; empty = this Mac's
+
+# `ogsf scheduler`, the long-running process that starts due tickets and,
+# when you allow it, requests from Matchday Live and the Claude connector.
+scheduler:
+  poll_seconds: 30
+  # Requests run here only when this is true. A request for a ticket you
+  # wrote may start any set piece; a request by set piece name may start
+  # only the ones listed below. Every match still passes the kickoff checklist.
+  accept_remote: false
+  allowed_set_pieces: [ask, scout-opposition, team-talk]
+
+players:
+  - name: playmaker
+    thinking: high
+    color: "#a78bfa"               # optional hex: the player's lane colour on Matchday Live
+    purpose: Turn a request into a plan the builder can implement without asking questions.
+    team_talks:
+      system: set_pieces/clubhouse/team_talks/playmaker/system.md
+      user: set_pieces/clubhouse/team_talks/playmaker/user.md
+    enchantments:
+      - set_pieces/clubhouse/enchantments/subagents.ts   # registers the four sub_* tools below
+    writes:                        # the plan is the only thing it may leave in the repo
+      - specs/
+    tools:                         # full recon + write for plan.md; no edit
+      - read
+      - grep
+      - find
+      - ls
+      - bash
+      - write
+      - sub_bring_on               # enchantment tools MUST be named here or they are filtered out
+      - sub_instruct
+      - sub_bench_list
+      - sub_take_off
+
+  - name: builder
+    thinking: high
+    color: "#22d3ee"
+    purpose: Implement the plan exactly; report every changed file in the match report.
+    team_talks:
+      system: set_pieces/clubhouse/team_talks/builder/system.md
+      user: set_pieces/clubhouse/team_talks/builder/user.md
+    # No `writes` key: unrestricted, and the only player that is. It still
+    # cannot touch the restricted area: the builder does not edit its own grader.
+    tools:
+      - read
+      - grep
+      - find
+      - ls
+      - bash
+      - edit
+      - write
+
+  - name: ranger
+    model: anthropic/claude-haiku-4-5
+    thinking: low
+    color: "#fbbf24"
+    purpose: Find and report where things live; change nothing.
+    team_talks:
+      system: set_pieces/clubhouse/team_talks/ranger/system.md
+      user: set_pieces/clubhouse/team_talks/ranger/user.md
+    enchantments:
+      - set_pieces/clubhouse/enchantments/subagents.ts
+    writes: []                     # read-only: its findings go to torch_pass/, which is runtime
+    tools:
+      - read
+      - grep
+      - find
+      - ls
+      - bash
+      - write
+      - sub_bring_on
+      - sub_instruct
+      - sub_bench_list
+      - sub_take_off
+
+  # No tester player: running the suite is a known command, so it is a
+  # referee objective over the qa checks above.
+
+  - name: safety_officer
+    thinking: high
+    color: "#fb7185"
+    purpose: Confirm that what was built is what was asked for; change nothing.
+    team_talks:
+      system: set_pieces/clubhouse/team_talks/safety_officer/system.md
+      user: set_pieces/clubhouse/team_talks/safety_officer/user.md
+    writes: []                     # a reviewer that cannot fix cannot quietly fix
+    tools:
+      - read
+      - grep
+      - find
+      - ls
+      - bash
+      - write
+
+  - name: bard
+    model: openai/gpt-5-mini
+    color: "#e879f9"
+    purpose: Write up the change that was just made, from the diff; document only.
+    team_talks:
+      system: set_pieces/clubhouse/team_talks/bard/system.md
+      user: set_pieces/clubhouse/team_talks/bard/user.md
+    writes:                        # documentation only: a rule, not a line in a prompt
+      - app_docs/
+      - docs/
+      - "**/*.md"
+      - "*.md"
+    tools:
+      - read
+      - grep
+      - find
+      - ls
+      - bash
+      - write
+      - edit

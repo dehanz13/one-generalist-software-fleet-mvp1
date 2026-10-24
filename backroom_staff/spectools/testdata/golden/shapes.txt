@@ -1,0 +1,34 @@
+== fixture: 33 candidates in 2 files
+   [position the original took] Feed.test.tsx: const first = document.querySelectorAll("li")[0];
+   [position the original took] Feed.test.tsx: expect(list.firstElementChild).toBe(first);
+   [tag+attribute selector gone] Feed.test.tsx: const tag = container.querySelector('time[data-hp="countdown"]');
+   [scoped selector gone] Feed.test.tsx: const cell = container.querySelector(".hp-daily-place [data-hp='gamer-tag']");
+   [a lookup by an ARIA attribute gone] Feed.test.tsx: const slide = root.querySelector(`[aria-roledescription="slide"]:not([aria-hidden])`);
+   [role query where a tag/attribute read was] Feed.test.tsx: const slide = root.querySelector(`[aria-roledescription="slide"]:not([aria-hidden])`);  =>  const slide = screen.getBy
+   [a read by id gone] Feed.test.tsx: const help = document.getElementById("squad-name-help");
+   [a selector with alternatives gone] Feed.test.tsx: const bar = root.querySelector('[role="progressbar"], progress');
+   [role query where a tag/attribute read was] Feed.test.tsx: const bar = root.querySelector('[role="progressbar"], progress');  =>  const bar = screen.queryByRole("progressbar");
+   [a fixture's own marker dropped] Feed.test.tsx: render(<Card><p data-testid="ways-in">Host or join</p></Card>);
+   [a hook lookup with no test id in its place] Feed.test.tsx: const card = container.querySelector('[data-hp="home-round"]');
+   [role query where a tag/attribute read was] Feed.test.tsx: const card = container.querySelector('[data-hp="home-round"]');  =>  const card = screen.getByRole("region", { name: "
+   [a hook lookup with no test id in its place] Feed.test.tsx: const a = el.querySelector('[data-hp="a"]') ?? el.querySelector('[data-achievement="first-win"]');
+   [a lookup by an element's own data attribute gone] Feed.test.tsx: const a = el.querySelector('[data-hp="a"]') ?? el.querySelector('[data-achievement="first-win"]');
+   [scope before a tag with an attribute gone] Feed.test.tsx: const you = container.querySelector("tbody tr[data-you]");
+   [role query where a tag/attribute read was] Feed.test.tsx: const you = container.querySelector("tbody tr[data-you]");  =>  const you = screen.getByRole("row", { name: /you/ });
+   [toHaveValue(0)] Meter.test.tsx: expect(bar).toHaveValue(0);
+   [.not.toBeChecked() passes for a missing state] Meter.test.tsx: expect(toggle).not.toBeChecked();
+   [style assertion that may not fail] Meter.test.tsx: expect(panel).toHaveStyle({ clipPath: "" });
+   [toContainElement for parentElement] Meter.test.tsx: expect(host).toContainElement(child);
+   [style assertion that may not fail] Meter.test.tsx: expect(el).toHaveStyle({ clipPath: expect.stringMatching(/polygon/) });
+   [anchored pattern lost its anchor] Meter.test.tsx: expect(el.style.clipPath).toMatch(/^polygon/);
+   [text query with selector/function] Meter.test.tsx: const time = screen.getByText(DATE, { selector: "time" });
+   [text query with selector/function] Meter.test.tsx: const cap = within(x).getByText((_text, el) => el?.tagName === "FIGCAPTION");
+   [markup search] Meter.test.tsx: expect(row.innerHTML).toMatch(/x/);
+   [?? null added] Meter.test.tsx: const floater = el.closest(".floater") ?? null;
+   [className equality -> toHaveClass without exact] Meter.test.tsx: expect(chip).toHaveClass("a b");
+   [role query where a tag/attribute read was] Meter.test.tsx: const buttons = nav.querySelectorAll("button");  =>  const buttons = within(nav).getAllByRole("button");
+   [a read by bare tag, a role in its place] Meter.test.tsx: const buttons = nav.querySelectorAll("button");  =>  const buttons = within(nav).getAllByRole("button");
+   [a read by bare tag, a role in its place] Meter.test.tsx: const links = nav.querySelectorAll("a");  =>  const links = within(nav).getAllByRole("link", { hidden: true });
+   [anchor by tag -> link by role] Meter.test.tsx: const links = nav.querySelectorAll("a");
+   [anchor by tag -> link by role] Meter.test.tsx: const anchor = x.closest("a");
+   [position the original took] Meter.test.tsx: expect(document.querySelectorAll(".x")[2]).toBeVisible();

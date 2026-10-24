@@ -1,0 +1,67 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "functions": {
+    "api/router.ts": { "maxDuration": 30 },
+    "api/live.ts": { "maxDuration": 300 }
+  },
+  "rewrites": [
+    { "source": "/api/live", "destination": "/api/live" },
+    { "source": "/.well-known/:path*", "destination": "/api/router?route=.well-known/:path*" },
+    { "source": "/oauth/:path*", "destination": "/api/router?route=oauth/:path*" },
+    { "source": "/api/mcp", "destination": "/api/router?route=mcp" },
+    { "source": "/api/fleet/:path*", "destination": "/api/router?route=fleet/:path*" },
+    { "source": "/api/:path*", "destination": "/api/router?route=:path*" },
+    { "source": "/((?!api/|assets/|demo/|fonts/|oauth/|\\.well-known/).*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/((?!oauth/).*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' http://127.0.0.1:* http://localhost:* https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=(), hid=()"
+        }
+      ]
+    },
+    {
+      "source": "/oauth/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'none'; style-src 'sha256-WmhdQGmAFM6vHkjlQRPg1icSXtYHrOqzr2jPvFtyNzo='; form-action 'self' https: http://localhost:* http://127.0.0.1:*; frame-ancestors 'none'; base-uri 'none'"
+        },
+        { "key": "Cache-Control", "value": "no-store" },
+        { "key": "Pragma", "value": "no-cache" }
+      ]
+    },
+    {
+      "source": "/.well-known/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/demo/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=86400" }]
+    }
+  ]
+}
